@@ -40,8 +40,8 @@ async def send_message_to_users(msg: types.Message, state: FSMContext):
             NotUserCount += 1
             pass
     await msg.bot.send_message(chat_id=msg.from_user.id, text=f"<b><i>📊 Статистика по рассылке</i></b>\n\n"
-                                                              f"Отправлено сообщений: {UserCount}\n"
-                                                              f"Заблокированных пользователей: {NotUserCount}",
+                                                              f"Отправлено сообщений: <code>{UserCount}</code>\n"
+                                                              f"Заблокированных пользователей: <code>{NotUserCount}</code>",
                                reply_markup=kb_admin)
     await state.clear()
 
