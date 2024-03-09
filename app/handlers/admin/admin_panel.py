@@ -5,6 +5,7 @@ from aiogram.filters import Command
 from app.keyboards.reply import kb_menu
 from app.filters.admin_type import IsBotAdminFilter
 from app.handlers.admin.kb_admin import kb_admin, kb_admin_text
+from app.database.models import count_users_in_db, count_total_orders
 
 
 router = Router()
@@ -26,7 +27,11 @@ async def admin_start(msg: types.Message):
 @router.message(IsBotAdminFilter(is_admin=True),
                 F.text == "📊 Статистика")
 async def main_menu(msg: types.Message):
-    await msg.reply(text="В разработке", reply_markup=kb_admin)
+    total_users = await count_users_in_db()
+    total_orders = await count_total_orders()
+    await msg.answer(text=f"<b><i>Общая статистика нашего проекта:</i></b>\n\n"
+                          f"🫂 Всего Пользователей: <code>{total_users}</code>\n"
+                          f"👨‍💻 Заявок за весь период: <code>{total_orders}</code>", reply_markup=kb_admin)
 
 
 @router.message(IsBotAdminFilter(is_admin=True),
