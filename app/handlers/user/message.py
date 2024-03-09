@@ -9,7 +9,7 @@ from app.keyboards.reply import kb_menu, kb_exit, kb_goods, kb_choice, kb_delive
 from app.keyboards.inline import kb_price
 from app.text.main import reply
 from app.utils.state import Application
-from app.database.models import check_user_to_db, get_text
+from app.database.models import check_user_to_db, get_text, add_application_to_table
 
 router = Router()
 
@@ -199,7 +199,9 @@ async def get_parents_contacts(msg: Message, bot: Bot, state: FSMContext):
     get_client_phone = client_phone_user['client_phone_user']
     get_choice_user = choice_user['choice_user']
     get_name_of_organization = name_of_organization_user['name_of_organization_user']
-    await msg.answer(text="Ваше заявка успешно отправлено! Спасибо и ожидайте ответа!", reply_markup=kb_menu)
+    chat_id_user = msg.from_user.id
+    await add_application_to_table(date=get_data, product=get_goods, address=get_address, client_phone=get_client_phone, full_name=get_name_of_organization, chat_id=chat_id_user)
+    await msg.answer(text="Ваше заявка успешно отправлена! Спасибо и ожидайте ответа!", reply_markup=kb_menu)
     # Поменять CHAT_ID
     await bot.send_message(chat_id="-4086537550",
                            text=reply.format(id=msg.from_user.username, Date=get_data,
