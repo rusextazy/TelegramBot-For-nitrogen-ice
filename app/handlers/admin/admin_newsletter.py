@@ -18,7 +18,7 @@ router = Router()
 
 @router.message(IsBotAdminFilter(is_admin=True),
                 F.text == "📩 Рассылка")
-async def send_message_to_users(msg: types.Message, state: FSMContext):
+async def send_message(msg: types.Message, state: FSMContext):
     await msg.answer(text="<b><i>Тут вы можете послать рассылку всем пользователям бота!</i></b>\n\n"
                           "Пришлите фотку с текстом, либо просто текст!", reply_markup=kb_exit_admin)
     await state.set_state(MyForm.Message_text)

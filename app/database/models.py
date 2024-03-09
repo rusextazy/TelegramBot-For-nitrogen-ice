@@ -9,7 +9,7 @@ async def add_application_to_table(date, product, address, client_phone, full_na
         await connect.commit()
 
 
-# Подсчет сколько всего было заявок
+# Подсчет сколько всего было заявок (ПО ЗАЯВКЕ)
 async def count_total_orders():
     async with aiosqlite.connect('app/database/cryolife_database.db') as connect:
         cursor = await connect.execute('SELECT COUNT(*) FROM users_delivery')
@@ -18,7 +18,7 @@ async def count_total_orders():
         return total_orders
 
 
-# Проверка есть ли юзер в бд!
+# Проверка есть ли пользователь в бд, если нет - то добовление
 async def check_user_to_db(name, chat_id):
     async with aiosqlite.connect('app/database/cryolife_database.db') as connect:
         cursor = await connect.execute('SELECT * FROM users WHERE chat_id = ?', (chat_id,))
@@ -36,7 +36,7 @@ async def count_users_in_db():
         return count[0]  # Возвращаем количество пользователей из первой колонки
 
 
-# Получение всех chat_id Для рассылки
+# Получение всех пользователей(chat_id) - Для рассылки!
 async def get_all_chat_ids():
     async with aiosqlite.connect('app/database/cryolife_database.db') as connect:
         cursor = await connect.execute('SELECT chat_id FROM users')
@@ -44,7 +44,7 @@ async def get_all_chat_ids():
         return [id[0] for id in all_chat_ids]
 
 
-# Получение текста из бд
+# Получение текста из бд(прайс, контакты)
 async def get_text(id_text):
     async with aiosqlite.connect('app/database/cryolife_database.db') as connect:
         cursor = await connect.execute('SELECT text FROM price_list WHERE id = ?', (id_text,))

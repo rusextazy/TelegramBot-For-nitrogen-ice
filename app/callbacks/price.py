@@ -8,7 +8,7 @@ router = Router()
 
 
 @router.callback_query(F.data.in_(('loading_works', 'a_liquid_nitrogen', 'dry_ice', 'rental_of_thermoses')))
-async def sub_check(callback: types.CallbackQuery):
+async def price_get(callback: types.CallbackQuery):
     name = callback.from_user.username
     chat_id = callback.from_user.id
     await check_user_to_db(name, chat_id)

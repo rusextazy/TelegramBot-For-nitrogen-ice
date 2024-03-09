@@ -13,20 +13,20 @@ router = Router()
 
 @router.message(IsBotAdminFilter(is_admin=True),
                 F.text == "🔙 Назад")
-async def main_menu(msg: types.Message, state: FSMContext):
+async def menu_admin(msg: types.Message, state: FSMContext):
     await state.clear()
     await msg.reply(text="Вы вернулись на главное меню!", reply_markup=kb_admin)
 
 
 @router.message(IsBotAdminFilter(is_admin=True),
                 Command("admin_panel"))
-async def admin_start(msg: types.Message):
+async def start_admin(msg: types.Message):
     await msg.answer(text="Поздравляю! Вы вошли в Админ_Панель", reply_markup=kb_admin)
 
 
 @router.message(IsBotAdminFilter(is_admin=True),
                 F.text == "📊 Статистика")
-async def main_menu(msg: types.Message):
+async def send_statistics_admin(msg: types.Message):
     total_users = await count_users_in_db()
     total_orders = await count_total_orders()
     photo_main = FSInputFile('app/photo/main.png')
@@ -38,12 +38,12 @@ async def main_menu(msg: types.Message):
 
 @router.message(IsBotAdminFilter(is_admin=True),
                 F.text == "📄 Поменять текст")
-async def change_price(msg: types.Message):
+async def change_text_admin(msg: types.Message):
     await msg.answer(text="Тут вы можете поменять текст для прайса или контактов!\nВыбери на клавиатуре!",
                      reply_markup=kb_admin_text)
 
 
 @router.message(IsBotAdminFilter(is_admin=True),
                 F.text == "🔙 Вернуться в user_menu")
-async def change_price(msg: types.Message):
+async def back_to_user_menu(msg: types.Message):
     await msg.answer(text="Вы вернулись в меню!", reply_markup=kb_menu)
