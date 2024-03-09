@@ -1,3 +1,5 @@
+import re
+
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -5,7 +7,7 @@ from aiogram.filters import Command
 
 from app.keyboards.reply import kb_menu, kb_exit, kb_goods, kb_choice, kb_delivery, kb_address
 from app.keyboards.inline import kb_price
-from app.text.main import contacts, reply
+from app.text.main import reply
 from app.utils.state import Application
 from app.database.models import check_user_to_db, get_text
 
@@ -50,26 +52,42 @@ async def get_statement(msg: Message, state: FSMContext):
     await state.set_state(Application.Date)
 
 
+async def check_date_format(date):
+    pattern = r"^\d{2}\.\d{2}\.\d{4}$"  # Паттерн для даты в формате 00.00.0000
+    if re.match(pattern, date):
+        return True
+    else:
+        return False
+
+
 @router.message(Application.Date)
 async def get_name_child(msg: Message, state: FSMContext):
-    if len(msg.text) <= 9 or len(msg.text) >= 11:
-        await msg.answer(text="Извините, будьте внимательны при заполнении!\nПри каждом шаге есть Формат заполнения!")
-    else:
+    if await check_date_format(msg.text):
         await state.update_data(data_user=msg.text)
         await msg.answer(text="Введите интервал времени\nФормат: 00:00-00:00\nПожалуйста будьте внимательные "
                               "и следуйте инструкциям")
         await state.set_state(Application.Time_Interval)
+    else:
+        await msg.answer(text="Извините, будьте внимательны при заполнении!\nПри каждом шаге есть Формат заполнения!")
+
+
+async def check_time_format(time):
+    pattern = r"^\d{2}:\d{2}-\d{2}:\d{2}$"  # Паттерн для времени в формате 00:00-00:00
+    if re.match(pattern, time):
+        return True
+    else:
+        return False
 
 
 @router.message(Application.Time_Interval)
 async def get_data_child(msg: Message, state: FSMContext):
-    if len(msg.text) < 11 or len(msg.text) > 11:
-        await msg.answer(
-            text="Извините, будьте внимательны при заполнении!\nПри каждом шаге есть Формат заполнения!")
-    else:
+    if await check_time_format(msg.text):
         await state.update_data(time_interval_user=msg.text)
         await msg.answer(text="Выберете товар, какой вам нужен(нажмите кнопку снизу)", reply_markup=kb_goods)
         await state.set_state(Application.Goods)
+    else:
+        await msg.answer(
+            text="Извините, будьте внимательны при заполнении!\nПри каждом шаге есть Формат заполнения!")
 
 
 @router.message(Application.Goods)
@@ -124,15 +142,23 @@ async def get_name_mother(msg: Message, state: FSMContext):
     await state.set_state(Application.Client_Phone)
 
 
+async def check_phone_number(phone_number):
+    pattern = r"^89\d{9}$"  # Паттерн для номера в формате 89*********
+    if re.match(pattern, phone_number):
+        return True
+    else:
+        return False
+
+
 @router.message(Application.Client_Phone)
 async def get_name_father(msg: Message, state: FSMContext):
-    if len(msg.text) <= 10 or len(msg.text) >= 12:
-        await msg.answer(text="Введите корректный номер телефона\n"
-                              "Формат: 89503352178")
-    else:
+    if await check_phone_number(msg.text):
         await state.update_data(client_phone_user=msg.text)
         await msg.answer(text="Выберете, кем вы являетесь(нажмите кнопку снизу)", reply_markup=kb_choice)
         await state.set_state(Application.Choice)
+    else:
+        await msg.answer(text="Введите корректный номер телефона\n"
+                              "Формат: 89503352178")
 
 
 @router.message(Application.Choice)
