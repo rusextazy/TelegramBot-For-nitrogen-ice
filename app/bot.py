@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher
 from app.utils.config import Config, load_config
 from app.handlers.user import commands, message
 from app.callbacks import price
-from app.handlers.admin import admin_panel, admin_text, admin_newsletter
+from app.handlers.admin import admin_panel, admin_text, admin_newsletter, admin_reply
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +34,7 @@ async def main():
     dp.include_router(admin_panel.router)
     dp.include_router(admin_text.router)
     dp.include_router(admin_newsletter.router)
+    dp.include_router(admin_reply.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
