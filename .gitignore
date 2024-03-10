@@ -2,6 +2,7 @@
 
 app/database/cryolife_database.db
 cryolife_database.db
+app/database/connect.py
 .mypy_cache/
 .idea/
 venv/
