@@ -16,7 +16,7 @@ async def start_cmd(msg: types.Message):
 
 
 @router.message(Command("help"))
-async def start_cmd(msg: types.Message):
+async def help_cmd(msg: types.Message):
     name = msg.from_user.username
     chat_id = msg.from_user.id
     await check_user_to_db(name, chat_id)
