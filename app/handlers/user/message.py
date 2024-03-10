@@ -9,7 +9,7 @@ from app.keyboards.reply import kb_menu, kb_exit, kb_goods, kb_choice, kb_delive
 from app.keyboards.inline import kb_price
 from app.text.main import reply
 from app.utils.state import Application
-from app.database.models import check_user_to_db, get_text
+from app.database.models import check_user_to_db, get_text, add_application_to_table
 
 router = Router()
 
@@ -180,9 +180,13 @@ async def application_choice(msg: Message, state: FSMContext):
 async def application_name(msg: Message, bot: Bot, state: FSMContext):
     await state.update_data(name_of_organization_user=msg.text)
     data = await state.get_data()
+    await add_application_to_table(date=data['data_user'], product=data['goods_user'], address=data['address_user'],
+                                   client_phone=data['client_phone_user'], full_name=data['name_of_organization_user'],
+                                   chat_id=msg.from_user.id)
     await msg.answer(text="Ваша заявка успешно отправлена! Спасибо и ожидайте ответа!", reply_markup=kb_menu)
     await bot.send_message(chat_id="-4086537550",
                            text=reply.format(id=msg.from_user.username,
+                                             chat_id=msg.from_user.id,
                                              Date=data['data_user'],
                                              Time_Interval=data['time_interval_user'],
                                              Goods=data['goods_user'],
@@ -193,4 +197,5 @@ async def application_name(msg: Message, bot: Bot, state: FSMContext):
                                              Client_Phone=data['client_phone_user'],
                                              Choice=data['choice_user'],
                                              Name_Of_Organization=data['name_of_organization_user']))
+
     await state.clear()
